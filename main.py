@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime
-
+import time
+import smtplib
 
 MY_LAT = "ENTER YOUR LOCATION'S LATITUDE"
 MY_LONG = "ENTER YOUR LOCATION'S LONGITUDE"
@@ -54,3 +55,20 @@ def is_night():
 
     if hour_now >= sunset or hour_now <= sunrise:
         return True
+
+
+'''
+Run a while loop. While True, check if the ISS is near my location and if it is night time (sunrise or sunset),
+if one of the conditions is false, then try checking again every 60 seconds; however, if the both conditions are true,
+then by using smtplib, send a notification through email.
+'''
+while True:
+    time.sleep(60)
+
+    if is_near_me() and is_night() is True:
+        with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
+            connection.starttls()
+            connection.login(MY_EMAIL, MY_PASSWORD)
+            connection.sendmail(from_addr=MY_EMAIL,
+                                to_addrs=RECIPIENTS,
+                                msg="Subject:LOOK UP!\n\nThe ISS is right above you! You're welcome. :)")
